@@ -298,8 +298,11 @@ namespace Config
 
 		renderwidth = 320;
 		renderheight = 256;
-		windowwidth = 960;
-		windowheight = 768;
+		//windowwidth = 960;
+		//windowheight = 768;
+
+		windowwidth = 1023;
+        windowheight = 818;
 
 		focallength = 128;
 
