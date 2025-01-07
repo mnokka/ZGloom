@@ -7,8 +7,21 @@
 #include <iostream>
 #include <fstream>
 
+
+#include <stdio.h>
+#include "inih/ini.h" 
+
+
 namespace Config
 {
+	
+/*Extra window config*/
+	typedef struct {
+    int width;
+    int height;
+	} config_t;
+
+	
 	static bool zombiemassacremode = false;
 
 	static int configkeys[KEY_END];
@@ -35,6 +48,25 @@ namespace Config
 	static SDL_Window* win;
 
 	static SDL_GameController *controller = nullptr;
+
+	/*Extra window config*/
+    bool SizeDone=false;
+
+/*Extra window config*/
+int handler(void* user, const char* section, const char* name,
+                   const char* value) {
+    config_t* pconfig = (config_t*)user;
+    if (strcmp(section, "Window") == 0) {
+        if (strcmp(name, "Width") == 0) {
+            pconfig->width = atoi(value);
+        } else if (strcmp(name, "Height") == 0) {
+            pconfig->height = atoi(value);
+        }
+    }
+  return 1;
+}
+
+
 
 	void SetDebug(bool b)
 	{
@@ -296,13 +328,11 @@ namespace Config
 		configkeys[KEY_SRIGHT] = SDL_SCANCODE_D;
 		configkeys[KEY_STRAFEMOD] = SDL_SCANCODE_LALT;
 
-		renderwidth = 320;
-		renderheight = 256;
-		//windowwidth = 960;
-		//windowheight = 768;
+		renderwidth = 800;
+		renderheight = 600;
 
-		windowwidth = 1023;
-        windowheight = 818;
+		//windowwidth = 800;
+        //windowheight = 600;
 
 		focallength = 128;
 
@@ -319,6 +349,25 @@ namespace Config
 		sfxvol = 5;
 
 		autofire = false;
+
+	/*Extra window config*/
+    char FileName[] = "zgloom.conf";
+    config_t config = {1000, 800}; // Oletusarvot
+
+    if (ini_parse(FileName, handler, &config) < 0) {
+        printf("No extra windows config file found (%s)\n",FileName);
+		SizeDone=false;
+    } else {
+        printf("Config file (%s) found\n",FileName);
+		windowwidth = config.width;
+		windowheight = config.height;
+    	printf("Window size set as: %dx%d\n", config.width, config.height);
+		SizeDone=true;
+    }
+
+
+
+
 
 		for (int i = 0; i < SDL_NumJoysticks(); ++i) 
 		{
@@ -369,8 +418,18 @@ namespace Config
 					}
 					if (command == "windowsize")
 					{
-						windowwidth = std::stoi(line.substr(0, line.find(" ")));
-						windowheight = std::stoi(line.substr(line.find(" ") + 1, std::string::npos));
+
+						/*Extra window config*/
+						if (SizeDone==true) {
+							printf("Window size set up using different config file, skipping standard way\n");
+
+						}
+						else {
+							windowwidth = std::stoi(line.substr(0, line.find(" ")));
+							windowheight = std::stoi(line.substr(line.find(" ") + 1, std::string::npos));
+							printf("Window size set up using standard config file (config.txt)\n");
+							printf("Width:%d   Lenght:%d\n",windowwidth,windowheight);
+						}
 					}
 					if (command == "focallength")
 					{
@@ -630,4 +689,5 @@ namespace Config
 	{
 		return focallength;
 	}
+
 }

@@ -33,15 +33,43 @@ When compiliation has finished, download the game from: https://github.com/earok
 
 Give running rights: *chmod u+x ZGloom*
 
-Start game: *ZGloom*
+Start game (inside game directory!): *ZGloom*
 
 ### Configuration 2025 info
 
-Menu selectable full screen graphics are bad. Instead you can compile default play window to be bigger.
-In *config.cpp* change default window to be bigger, for example:
+Menu selectable full screen graphics are bad, better configure play windows size.
 
-	windowwidth = 1023;
-    windowheight = 818;
+1) Traditional: use config.txt file (after it is generated during first execution)
+
+    *;The size of the game render bitmap. Bumping this up may lead to more overflow issues in the renderer. But you can* 
+
+    *get, say, 16:9 by using 460x256 or something in a larger window*
+
+    *rendersize 320 256*
+
+
+
+    *;The size of the actual window/fullscreen res. Guess this should be a multiple of the above for pixel perfect*
+
+    *windowsize 800 600*
+<br>
+<br>
+
+2) New configuration file (find comment tag /\*Extra window config\*/ in *config.cpp*) *zgloom.config* with
+content like:
+
+    [Window]
+
+    Width=801
+
+    Height=601
+
+Copy this file to the root of opened game package directory. Now screensize is taken from this config file, not the
+
+traditional config file.
+
+
+
 
 # How to play
 
@@ -74,9 +102,6 @@ ZGloom can now add in-game music using any module that XMP can play. Put the mod
 * No defender sub-game
 * LibXMP's MED playback isn't great on some tunes
 
-### 2025 Todo Info
-* Going to try use config file to setup default play screen window during startup
-(now one must compile this change)
 
 
 # License
